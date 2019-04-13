@@ -9,8 +9,8 @@ import random
 
 missing_attributes_phrases = {'drtype': ['The type of doctor you are looking for is required to book your appointment.'],
 'plz': ['Please provide the plz where the doctor should be to finalize your appointment.'],
-'startTime': ['I still need a start time when your appointment should be scheduled.'],
-'endTime': ['Provide me with an end time when your appointment should latest take place.', 'Tell me the end time man!']}
+'start_time': ['I still need a start time when your appointment should be scheduled.'],
+'end_time': ['Provide me with an end time when your appointment should latest take place.', 'Tell me the end time man!']}
 
 confirmationPhrases = ['Ok.', 'Great!', 'Thank you.', 'Roger that!', 'Copy that.', 'I received this.']
 
@@ -54,7 +54,7 @@ def get_none_session_attributes():
     return lst_none_attributes
 
 # --------------- Helpers that build all of the responses ----------------------
-session_attributes = {'drtype': 'none', 'plz': 'none', 'startTime': 'none', 'endTime': 'none'}
+session_attributes = {'drtype': 'none', 'plz': 'none', 'start_time': 'none', 'end_time': 'none'}
 def build_speechlet_response(title, output, reprompt_text, should_end_session):
     return {
         'outputSpeech': {
@@ -84,43 +84,60 @@ def build_response(session_attributes, speechlet_response):
 
 
 # --------------- Functions that control the skill's behavior ------------------
-def get_session_attribute_respose(attribute, intent):
+def get_session_attribute_respose(intent):
     # attribute is the type of attribute to be set
     # intent is the intent from the Alexa skill
-    print(session_attributes)
+
+
+    card_title = "test"
+
+    # print(f'session_attributes in get_session_attribute_respose {session_attributes}')
+
     # get a list of available attributes
     lst_attributes = list(session_attributes.keys())
-    # print(lst_attributes)
-    card_title = "test"
-    # check if the attribute exists in the list of attributes!
-    if attribute not in lst_attributes:
-        speech_output = "(get_session_attribute_respose) This attribute is not in the list of attributes. Repeat please."
 
-    else:
+    # check which intents there are to be set
+    intent_keys = list(intent['slots'].keys())  # which intents there are in the intent dictionary
+    attributes_to_set = []
 
-        # check if the attribute is none, if it is not, return response that this attribute is already set
-        none_session_attributes = get_none_session_attributes()
-        if attribute not in none_session_attributes:
-            speech_output = "(get_session_attribute_respose) This attribute is already set. Do another one."
+    for k in intent_keys:
+        if 'value' in intent['slots'][k]:
+            attributes_to_set.append(k)
 
-        # set the attribute and output the response alexa-style
+    print(f'attributes_to_set {attributes_to_set}')
+    # for each intent, get the corresponding attribute and check if the value is not alreay set
+    none_session_attributes = get_none_session_attributes()
+    for attribute in attributes_to_set:
+        try:
+            attributeFromAlexa = intent['slots'][attribute]['value']
+        except:
+            attributeFromAlexa = 'PANIC'
+
+        if attribute == 'type':
+            attribute = 'drtype' # type is reserved in python
+
+        # check if the attribute exists in the list of attributes!
+        if attribute not in lst_attributes:
+            speech_output = "(get_session_attribute_respose) This attribute is not in the list of attributes. Repeat please."
+
         else:
-            attributeFromAlexa = 'none_in_get_sess_attrib'
-            # THIS SHOULD BE CODED UNIFORMLY IN ALEXA
-            if attribute == 'plz':
-                attributeFromAlexa = intent['slots']['plz']['value']
-            if attribute == 'drtype':
-                attributeFromAlexa = intent['slots']['type']['value']
 
+            # check if the attribute is none, if it is not, return response that this attribute is already set
 
-            set_attribute(attribute, attributeFromAlexa)
-            none_session_attributes = get_none_session_attributes()
+            if attribute not in none_session_attributes:
+                speech_output = "(get_session_attribute_respose) This attribute is already set. Do another one."
 
-            # go through the non set attributes and create a response based on the values that are missing
-            # print(f'none_session_attributes {none_session_attributes}')
-            resp_phrase = phrases_missing_attributes(none_session_attributes)
+            # set the attribute and output the response alexa-style
+            else:
+                print(f'attribute to set {attribute}')
+                set_attribute(attribute, attributeFromAlexa)
+    none_session_attributes = get_none_session_attributes()
 
-            speech_output = resp_phrase
+    # go through the non set attributes and create a response based on the values that are missing
+    # print(f'none_session_attributes {none_session_attributes}')
+    resp_phrase = phrases_missing_attributes(none_session_attributes)
+
+    speech_output = resp_phrase
 
     reprompt_text = "You never responded to the first test message. Sending another one."
     should_end_session = False
@@ -136,10 +153,11 @@ def get_welcome_response():
     """
     card_title = "Welcome"
     speech_output = "Welcome to your custom alexa application!"
+    print(pd.__version__)
     # set_attribute('drtype', 'none')
     # set_attribute('plz', 'none')
-    # set_attribute('startTime', 'none')
-    # set_attribute('endTime', 'none')
+    # set_attribute('start_time', 'none')
+    # set_attribute('end_time', 'none')
     print(session_attributes)
     # If the user either does not reply to the welcome message or says something
     # that is not understood, they will be prompted again with this text.
@@ -167,8 +185,8 @@ def on_session_started(session_started_request, session):
     """
     set_attribute('drtype', 'none')
     set_attribute('plz', 'none')
-    set_attribute('startTime', 'none')
-    set_attribute('endTime', 'none')
+    set_attribute('start_time', 'none')
+    set_attribute('end_time', 'none')
     # Add additional code here as needed
     pass
 
@@ -181,8 +199,8 @@ def on_launch(launch_request, session):
 
     # set_attribute('drtype', 'none')
     # set_attribute('plz', 'none')
-    # set_attribute('startTime', 'none')
-    # set_attribute('endTime', 'none')
+    # set_attribute('start_time', 'none')
+    # set_attribute('end_time', 'none')
     # Dispatch to your skill's launch message
     return get_welcome_response()
 
@@ -197,9 +215,13 @@ def on_intent(intent_request, session):
     # print(session_attributes)
     # Dispatch to your skill's intent handlers
     if intent_name == "getType":
-        return get_session_attribute_respose('drtype', intent)
+        return get_session_attribute_respose(intent)
     elif intent_name == "getLocation":
-        return get_session_attribute_respose('plz', intent)
+        return get_session_attribute_respose(intent)
+    elif intent_name == "getStartTime":
+        return get_session_attribute_respose(intent)
+    elif intent_name == "getEndTime":
+        return get_session_attribute_respose(intent)
     # elif intent_name == "getLocation":
     #     return get_session_attribute_respose('location', intent)
     elif intent_name == "AMAZON.HelpIntent":
