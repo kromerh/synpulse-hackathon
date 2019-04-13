@@ -6,6 +6,11 @@ from __future__ import print_function
 import random
 
 
+# session attributes
+
+def create_specificDoctor_attribute(specificDoctor_value):
+    return {"specificDoctor": specificDoctor_value}
+
 # --------------- Helpers that build all of the responses ----------------------
 
 def build_speechlet_response(title, output, reprompt_text, should_end_session):
@@ -42,18 +47,42 @@ def get_drwho_response(intent):
     in your alexa skill in order for it to work.
     """
     session_attributes = {}
-    card_title = "Insult"
+    card_title = "DrWho"
 
-    name_to_insult = 'heiko'
-    insults = [f"{name_to_insult} is bullying Heiko.", f"I think that {name_to_insult} is mean. And bullying Heiko.", f"I will report {name_to_insult} to the po po police. For bullying innocent Heiko."]
-    print('Inside get_drwho_response function')
+
+    speech_output = 'test'
+
+    reprompt_text = "You never responded to the first test message. Sending another one."
+    should_end_session = False
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+def get_yes(intent, session):
+    """ An example of yes intent
+    """
+    session_attributes = {}
+    card_title = "Yes"
+    print(session_attributes)
+    session_attributes = create_specificDoctor_attribute(1)
+    print(session_attributes)
+    print('Inside get_yes function')
     print(intent)
+    speech_output = "Ok."
+
+    reprompt_text = "You never responded to the first test message. Sending another one."
+    should_end_session = False
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+
+
     speech_output = insults[random.randint(0,len(insults)-1)]
 
     reprompt_text = "You never responded to the first test message. Sending another one."
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
+
 
 def get_welcome_response():
     """ If we wanted to initialize the session to have some attributes we could
@@ -112,6 +141,8 @@ def on_intent(intent_request, session):
         return handle_session_end_request()
     elif intent_name == 'drWho':
         return get_drwho_response(intent)
+    elif intent_name == 'AMAZON.YesIntent':
+        return get_yes(intent, session)
     else:
         raise ValueError("Invalid intent")
 
