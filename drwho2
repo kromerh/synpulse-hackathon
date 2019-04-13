@@ -1,0 +1,162 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "dr who",
+            "intents": [
+                {
+                    "name": "AMAZON.FallbackIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "getSpeciality",
+                    "slots": [
+                        {
+                            "name": "specialist",
+                            "type": "AMAZON.MedicalOrganization",
+                            "samples": [
+                                "A {specialist}",
+                                "I need to visit a {specialist}",
+                                "{specialist}"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "Book an appoint with a {specialist}",
+                        "I need to visit a {specialist}",
+                        "{specialist}",
+                        "I need a {specialist}"
+                    ]
+                },
+                {
+                    "name": "getLocation",
+                    "slots": [
+                        {
+                            "name": "location",
+                            "type": "AMAZON.EUROPE_CITY",
+                            "samples": [
+                                "in {location}",
+                                "{location}"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "in {location}",
+                        "{location}"
+                    ]
+                },
+                {
+                    "name": "getStartTime",
+                    "slots": [
+                        {
+                            "name": "startTime",
+                            "type": "AMAZON.DATE"
+                        }
+                    ],
+                    "samples": [
+                        "{startTime}"
+                    ]
+                },
+                {
+                    "name": "getEndTime",
+                    "slots": [
+                        {
+                            "name": "endTime",
+                            "type": "AMAZON.DATE"
+                        }
+                    ],
+                    "samples": [
+                        "{endTime}"
+                    ]
+                }
+            ],
+            "types": []
+        },
+        "dialog": {
+            "intents": [
+                {
+                    "name": "getSpeciality",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "specialist",
+                            "type": "AMAZON.MedicalOrganization",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.755656064858.1493071523230"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "getLocation",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "location",
+                            "type": "AMAZON.EUROPE_CITY",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1521518008279.1149052381252"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "getStartTime",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "startTime",
+                            "type": "AMAZON.DATE",
+                            "confirmationRequired": false,
+                            "elicitationRequired": false,
+                            "prompts": {}
+                        }
+                    ]
+                }
+            ],
+            "delegationStrategy": "ALWAYS"
+        },
+        "prompts": [
+            {
+                "id": "Elicit.Slot.755656064858.1493071523230",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What specialist do you need to visit?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1521518008279.1149052381252",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "In which region shall I look?"
+                    }
+                ]
+            }
+        ]
+    }
+}
