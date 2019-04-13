@@ -4,16 +4,9 @@ This is a Python template for Alexa to get you building skills (conversations) q
 
 from __future__ import print_function
 
-# --------------- Session attributes
-def set_attribute(key, value):
-    session_attributes[key] = value
-
-def get_attribute(key):
-    return session_attributes[key]
-
 
 # --------------- Helpers that build all of the responses ----------------------
-session_attributes = {'drtype': -1, 'location': -1, 'startTime': -1, 'endTime': -1}
+
 def build_speechlet_response(title, output, reprompt_text, should_end_session):
     return {
         'outputSpeech': {
@@ -43,47 +36,12 @@ def build_response(session_attributes, speechlet_response):
 
 
 # --------------- Functions that control the skill's behavior ------------------
-def get_getSpeciality_response(intent):
+def get_test_response():
     """ An example of a custom intent. Same structure as welcome message, just make sure to add this intent
     in your alexa skill in order for it to work.
     """
-    print(intent)
-    drtype = intent['slots']['type']['value']
-    print(f'session_attributes in getSpeciality {session_attributes}')
-    set_attribute('drtype', drtype)
-
-    location = get_attribute('location')
-    startTime = get_attribute('startTime')
-    endTime = get_attribute('endTime')
-
-    print(drtype, location, startTime, endTime)
-
-    card_title = "test"
-
-
-    speech_output = f"Ok. I have set the type to {drtype}"
-    reprompt_text = "You never responded to the first test message. Sending another one."
-    should_end_session = False
-    return build_response(session_attributes, build_speechlet_response(
-        card_title, speech_output, reprompt_text, should_end_session))
-
-def get_getLocation_response(intent):
-    """ An example of a custom intent. Same structure as welcome message, just make sure to add this intent
-    in your alexa skill in order for it to work.
-    """
-    print(f'session_attributes in getLocation {session_attributes}')
-
-    location = intent['slots']['location']['value']
-    print(f'session_attributes in getSpeciality {session_attributes}')
-    set_attribute('location', location)
-
-    drtype = get_attribute('drtype')
-    startTime = get_attribute('startTime')
-    endTime = get_attribute('endTime')
-
-    print(speciality, location, startTime, endTime)
-
-    card_title = "test"
+    session_attributes = {}
+    card_title = "Test"
     speech_output = "This is a test message"
     reprompt_text = "You never responded to the first test message. Sending another one."
     should_end_session = False
@@ -130,10 +88,6 @@ def on_launch(launch_request, session):
     """ Called when the user launches the skill without specifying what they
     want
     """
-    set_attribute('speciality', -1)
-    set_attribute('location', -1)
-    set_attribute('startTime', -1)
-    set_attribute('endTime', -1)
     # Dispatch to your skill's launch message
     return get_welcome_response()
 
@@ -143,12 +97,10 @@ def on_intent(intent_request, session):
 
     intent = intent_request['intent']
     intent_name = intent_request['intent']['name']
-    print(session_attributes)
+
     # Dispatch to your skill's intent handlers
-    if intent_name == "getType":
-        return get_getSpeciality_response(intent)
-    elif intent_name == "getLocation":
-        return get_getLocation_response(intent)
+    if intent_name == "getSpeciality":
+        return get_test_response()
     elif intent_name == "AMAZON.HelpIntent":
         return get_welcome_response()
     elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":
