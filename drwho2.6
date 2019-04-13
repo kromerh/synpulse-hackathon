@@ -1,0 +1,285 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "dr who",
+            "intents": [
+                {
+                    "name": "AMAZON.FallbackIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "getType",
+                    "slots": [
+                        {
+                            "name": "type",
+                            "type": "AMAZON.Corporation",
+                            "samples": [
+                                "I need a {type}",
+                                "A {type}",
+                                "I need to visit a {type}",
+                                "{type}"
+                            ]
+                        },
+                        {
+                            "name": "start_time",
+                            "type": "AMAZON.DATE"
+                        },
+                        {
+                            "name": "plz",
+                            "type": "AMAZON.EUROPE_CITY"
+                        },
+                        {
+                            "name": "end_time",
+                            "type": "AMAZON.DATE"
+                        }
+                    ],
+                    "samples": [
+                        "book a {type} close to {plz} on {start_time}",
+                        "I need a doctor",
+                        "Book an appointment with a {type} in {plz} from {start_time} to {end_time}",
+                        "Book an appointment with a {type} on  {start_time} in {plz}",
+                        "Book an appointment with a {type}",
+                        "I need to visit a {type}",
+                        "I need a {type}"
+                    ]
+                },
+                {
+                    "name": "getLocation",
+                    "slots": [
+                        {
+                            "name": "plz",
+                            "type": "AMAZON.EUROPE_CITY",
+                            "samples": [
+                                "in {plz}",
+                                "{plz}"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "book a doctor close to {plz}",
+                        "Book a doctor in {plz}",
+                        "In need a doctor close to {plz}",
+                        "I need a doctor in {plz}"
+                    ]
+                },
+                {
+                    "name": "getStartTime",
+                    "slots": [
+                        {
+                            "name": "start_time",
+                            "type": "AMAZON.DATE",
+                            "samples": [
+                                "on {start_time}",
+                                "{start_time}"
+                            ]
+                        },
+                        {
+                            "name": "type",
+                            "type": "AMAZON.Corporation"
+                        }
+                    ],
+                    "samples": [
+                        "I need a {type}  {start_time}",
+                        "I need a doctor {start_time}",
+                        "I need a {type} on {start_time}",
+                        "I need a doctor on {start_time}"
+                    ]
+                },
+                {
+                    "name": "getEndTime",
+                    "slots": [
+                        {
+                            "name": "end_time",
+                            "type": "AMAZON.DATE",
+                            "samples": [
+                                "on {end_time}",
+                                "{end_time}"
+                            ]
+                        },
+                        {
+                            "name": "type",
+                            "type": "AMAZON.Corporation"
+                        }
+                    ],
+                    "samples": [
+                        "I need a {type} until {end_time}",
+                        "I need a doctor until {end_time}",
+                        "Book a doctor until {end_time}"
+                    ]
+                }
+            ],
+            "types": []
+        },
+        "dialog": {
+            "intents": [
+                {
+                    "name": "getType",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "type",
+                            "type": "AMAZON.Corporation",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.755656064858.1493071523230"
+                            }
+                        },
+                        {
+                            "name": "start_time",
+                            "type": "AMAZON.DATE",
+                            "confirmationRequired": false,
+                            "elicitationRequired": false,
+                            "prompts": {}
+                        },
+                        {
+                            "name": "plz",
+                            "type": "AMAZON.EUROPE_CITY",
+                            "confirmationRequired": false,
+                            "elicitationRequired": false,
+                            "prompts": {}
+                        },
+                        {
+                            "name": "end_time",
+                            "type": "AMAZON.DATE",
+                            "confirmationRequired": false,
+                            "elicitationRequired": false,
+                            "prompts": {}
+                        }
+                    ]
+                },
+                {
+                    "name": "getLocation",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "plz",
+                            "type": "AMAZON.EUROPE_CITY",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1521518008279.1149052381252"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "getStartTime",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "start_time",
+                            "type": "AMAZON.DATE",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.227815340003.657551719833"
+                            }
+                        },
+                        {
+                            "name": "type",
+                            "type": "AMAZON.Corporation",
+                            "confirmationRequired": false,
+                            "elicitationRequired": false,
+                            "prompts": {}
+                        }
+                    ]
+                },
+                {
+                    "name": "getEndTime",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "end_time",
+                            "type": "AMAZON.DATE",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.459153021184.1101698323076"
+                            }
+                        },
+                        {
+                            "name": "type",
+                            "type": "AMAZON.Corporation",
+                            "confirmationRequired": false,
+                            "elicitationRequired": false,
+                            "prompts": {}
+                        }
+                    ]
+                }
+            ],
+            "delegationStrategy": "ALWAYS"
+        },
+        "prompts": [
+            {
+                "id": "Elicit.Slot.755656064858.1493071523230",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What specialist do you need to visit?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1521518008279.1149052381252",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "In which region shall I search?"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "In which region?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1294946429705.795273514451",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What specialist do you need?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.227815340003.657551719833",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "When shall I book the appointment at the earliest?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.459153021184.1101698323076",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "When shall I book the appointment at the latest?"
+                    }
+                ]
+            }
+        ]
+    }
+}
