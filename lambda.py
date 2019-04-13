@@ -3,6 +3,33 @@ This is a Python template for Alexa to get you building skills (conversations) q
 """
 
 from __future__ import print_function
+import random
+
+# --------------- Alexa Phrases and functions related
+
+missing_attributes_phrases = {'drtype': ['The type of doctor you are looking for is required to book your appointment.'],
+'plz': ['Please provide the plz where the doctor should be to finalize your appointment.'],
+'startTime': ['I still need a start time when your appointment should be scheduled.'],
+'endTime': ['Provide me with an end time when your appointment should latest take place.', 'Tell me the end time man!']}
+
+confirmationPhrases = ['Ok.', 'Great!', 'Thank you.', 'Roger that!', 'Copy that.', 'I received this.']
+
+
+def phrases_missing_attributes(missing_attributes):
+    #
+
+    confirmation = confirmationPhrases[random.randint(0,len(confirmationPhrases)-1)]
+
+    out_phrase = []
+
+    out_phrase.append(confirmation)
+
+    for item in missing_attributes:
+        missingPhrase = missing_attributes_phrases[item][random.randint(0,len(missing_attributes_phrases[item])-1)]
+        out_phrase.append(missingPhrase)
+    # print(f'out_phrase {out_phrase}')
+    res = " ".join(out_phrase)
+    return res
 
 # --------------- Functions related to the session attributes
 
@@ -27,7 +54,7 @@ def get_none_session_attributes():
     return lst_none_attributes
 
 # --------------- Helpers that build all of the responses ----------------------
-session_attributes = {'drtype': 'none', 'location': 'none', 'startTime': 'none', 'endTime': 'none'}
+session_attributes = {'drtype': 'none', 'plz': 'none', 'startTime': 'none', 'endTime': 'none'}
 def build_speechlet_response(title, output, reprompt_text, should_end_session):
     return {
         'outputSpeech': {
@@ -60,7 +87,7 @@ def build_response(session_attributes, speechlet_response):
 def get_session_attribute_respose(attribute, intent):
     # attribute is the type of attribute to be set
     # intent is the intent from the Alexa skill
-
+    print(session_attributes)
     # get a list of available attributes
     lst_attributes = list(session_attributes.keys())
     # print(lst_attributes)
@@ -80,8 +107,8 @@ def get_session_attribute_respose(attribute, intent):
         else:
             attributeFromAlexa = 'none_in_get_sess_attrib'
             # THIS SHOULD BE CODED UNIFORMLY IN ALEXA
-            if attribute == 'location':
-                attributeFromAlexa = intent['slots']['location']['value']
+            if attribute == 'plz':
+                attributeFromAlexa = intent['slots']['plz']['value']
             if attribute == 'drtype':
                 attributeFromAlexa = intent['slots']['type']['value']
 
@@ -89,7 +116,11 @@ def get_session_attribute_respose(attribute, intent):
             set_attribute(attribute, attributeFromAlexa)
             none_session_attributes = get_none_session_attributes()
 
-            speech_output = f"Ok. I have set the type to {attribute}. I am missing {none_session_attributes}"
+            # go through the non set attributes and create a response based on the values that are missing
+            # print(f'none_session_attributes {none_session_attributes}')
+            resp_phrase = phrases_missing_attributes(none_session_attributes)
+
+            speech_output = resp_phrase
 
     reprompt_text = "You never responded to the first test message. Sending another one."
     should_end_session = False
@@ -106,7 +137,7 @@ def get_welcome_response():
     card_title = "Welcome"
     speech_output = "Welcome to your custom alexa application!"
     # set_attribute('drtype', 'none')
-    # set_attribute('location', 'none')
+    # set_attribute('plz', 'none')
     # set_attribute('startTime', 'none')
     # set_attribute('endTime', 'none')
     print(session_attributes)
@@ -135,7 +166,7 @@ def on_session_started(session_started_request, session):
         variables from a previous state stored in an external database
     """
     set_attribute('drtype', 'none')
-    set_attribute('location', 'none')
+    set_attribute('plz', 'none')
     set_attribute('startTime', 'none')
     set_attribute('endTime', 'none')
     # Add additional code here as needed
@@ -149,7 +180,7 @@ def on_launch(launch_request, session):
     """
 
     # set_attribute('drtype', 'none')
-    # set_attribute('location', 'none')
+    # set_attribute('plz', 'none')
     # set_attribute('startTime', 'none')
     # set_attribute('endTime', 'none')
     # Dispatch to your skill's launch message
@@ -161,10 +192,14 @@ def on_intent(intent_request, session):
 
     intent = intent_request['intent']
     intent_name = intent_request['intent']['name']
-    print(session_attributes)
+
+    # find out what slots there are in the
+    # print(session_attributes)
     # Dispatch to your skill's intent handlers
     if intent_name == "getType":
         return get_session_attribute_respose('drtype', intent)
+    elif intent_name == "getLocation":
+        return get_session_attribute_respose('plz', intent)
     # elif intent_name == "getLocation":
     #     return get_session_attribute_respose('location', intent)
     elif intent_name == "AMAZON.HelpIntent":
