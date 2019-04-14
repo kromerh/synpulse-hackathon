@@ -1,0 +1,6 @@
+missing_attributes_phrases = {'drtype': ['The type of doctor you are looking for is required to book your appointment.'],
+'plz': ['In which region shall I search? Please tell me a postal code.', 'Tell me a postal code, please.' ],
+'startTime': ['When do you wish to get an appointment at the earliest?', 'From when shall I book the appointment?'],
+'endTime': ['When should be the latest appointment?', 'And the latest appointmen?']}
+
+confirmationPhrases = ['Ok.', 'Great!', 'Thank you.']
