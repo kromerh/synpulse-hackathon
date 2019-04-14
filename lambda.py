@@ -4,15 +4,65 @@ This is a Python template for Alexa to get you building skills (conversations) q
 
 from __future__ import print_function
 import random
+import datetime
+from datetime import date, timedelta
+
+# --------------- Mockup DataBase, get from SQL
+
+DB_id = {0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8, 8: 9, 9: 10}
+DB_name = {0: 'Dr. Müller', 1: 'Dr. Lu', 2: 'Dr. Frankenstein', 3: 'Dr. Rappen', 4: 'Dr. Mayer', 5: 'Dr. Herz', 6: 'Dr. Wiemer', 7: 'Dr. Boo', 8: 'Dr. Who', 9: 'Dr. Simic'}
+DB_plz = {0: '8046',
+ 1: '8050',
+ 2: '8047',
+ 3: '8050',
+ 4: '8048',
+ 5: '8049',
+ 6: '8046',
+ 7: '8047',
+ 8: '8049',
+ 9: '8047'}
+DB_type = {0: 'orthopedist', 1: 'cardiologist', 2: 'general physician',3: 'general physician',4: 'general physician',5: 'cardiologist',6: 'general physician',7: 'general physician',8: 'general physician',9: 'emergency section'}
+DB_start = {0: '2019-04-15',
+ 1: '2019-04-20',
+ 2: '2019-05-02',
+ 3: '2019-04-15',
+ 4: '2019-04-20',
+ 5: '2019-05-02',
+ 6: '2019-04-22',
+ 7: '2019-04-22',
+ 8: '2019-06-01',
+ 9: '2019-04-15'}
+DB_end = {0: '2019-06-30',
+ 1: '2019-08-02',
+ 2: '2019-08-20',
+ 3: '2019-05-02',
+ 4: '2019-08-01',
+ 5: '2019-07-10',
+ 6: '2019-07-11',
+ 7: '2019-06-21',
+ 8: '2019-06-20',
+ 9: '2019-08-02'}
+
+def numCountsInDict(aDict, attribute):
+    cnts = dict()
+    if attribute in aDict.values():
+        for item in aDict.values():
+            if item == attribute:
+                cnts[item] = cnts.get(item, 0) + 1
+
+        return list(cnts.values())[0]
+    else:
+        return 0
+
 
 # --------------- Alexa Phrases and functions related
 
 missing_attributes_phrases = {'drtype': ['The type of doctor you are looking for is required to book your appointment.'],
-'plz': ['Please provide the postal code where the doctor should be to finalize your appointment.'],
-'start_time': ['I still need a start time when your appointment should be scheduled.'],
-'end_time': ['Provide me with an end time when your appointment should latest take place.', 'Tell me the end time man!']}
+'plz': ['In which region shall I search? Please tell me a postal code.', 'Tell me a postal code, please.' ],
+'start_time': ['When do you wish to get an appointment at the earliest?', 'From when shall I book the appointment?'],
+'end_time': ['When should be the latest appointment?', 'And the latest appointmen?']}
 
-confirmationPhrases = ['Ok.', 'Great!', 'Thank you.', 'Roger that!', 'Copy that.', 'I received this.']
+confirmationPhrases = ['Ok!', 'Great!', 'Thank you!', 'Roger that!', 'Copy that!', 'I received this!']
 
 
 def phrases_missing_attributes(missing_attributes):
@@ -36,6 +86,14 @@ def phrases_missing_attributes(missing_attributes):
 # set a session attribute
 def set_attribute(key, value):
     session_attributes[key] = value
+    entriesInDB = -1
+    if key == 'drtype':
+        entriesInDB = numCountsInDict(DB_type, value)
+        # print(f'entriesInDB {entriesInDB}')
+    if key == 'plz':
+        entriesInDB = numCountsInDict(DB_plz, value)
+        # print(f'entriesInDB {entriesInDB}')
+    return entriesInDB
 
 # return a single session attribute
 def get_attribute(key):
@@ -90,7 +148,7 @@ def get_session_attribute_respose(intent):
 
 
     card_title = "test"
-
+    numEntriesInDB = 0
     # print(f'session_attributes in get_session_attribute_respose {session_attributes}')
 
     # get a list of available attributes
@@ -130,14 +188,21 @@ def get_session_attribute_respose(intent):
             # set the attribute and output the response alexa-style
             else:
                 print(f'attribute to set {attribute}')
-                set_attribute(attribute, attributeFromAlexa)
+                numEntriesInDB = set_attribute(attribute, attributeFromAlexa)
+                print(f'numEntriesInDB {numEntriesInDB}')
+
     none_session_attributes = get_none_session_attributes()
 
     if len(none_session_attributes) > 0:  # some empty session attributes, Alexa still will wait for some input
         # go through the non set attributes and create a response based on the values that are missing
-        # print(f'none_session_attributes {none_session_attributes}')
+        print(f'none_session_attributes {none_session_attributes}')
         resp_phrase = phrases_missing_attributes(none_session_attributes)
+        if numEntriesInDB > 0:
+            resp_phrase = resp_phrase.split('!')
+            confirmation = confirmationPhrases[random.randint(0,len(confirmationPhrases)-1)]
 
+            resp_phrase[0] = f'{confirmation} I found {numEntriesInDB} records in my database.'
+            resp_phrase = " ".join(resp_phrase)
         speech_output = resp_phrase
     else:
 
@@ -151,7 +216,17 @@ def get_session_attribute_respose(intent):
         for k in session_attributes:
             attribute_values.append(session_attributes[k])
 
-        appointment_date = '2019-05-17' # make up a random appointment date
+        # appointment_date = '2019-05-17' # make up a random appointment date
+        start_time = datetime.datetime.strptime(session_attributes['start_time'],'%Y-%m-%d')
+        end_time = datetime.datetime.strptime(session_attributes['end_time'],'%Y-%m-%d')
+
+        delta = end_time - start_time         # timedelta
+
+        dates = [start_time + timedelta(i) for i in range(delta.days + 1)]
+
+        appointment_date = dates[random.randint(0,len(dates)-1)]
+        appointment_date = datetime.datetime.strftime(appointment_date,'%Y-%m-%d')
+        # appointment_date = '2019-04-30'
         appointment_time = '14:00' # make up a random appointment date
 
         # speech_output = '42'
@@ -169,7 +244,7 @@ def get_welcome_response():
     add those here
     """
     card_title = "Welcome"
-    speech_output = "Welcome to your custom alexa application!"
+    speech_output = "Welcome to Doctor Who, your automated doctor booking system. How can I help you?"
 
     # set_attribute('drtype', 'none')
     # set_attribute('plz', 'none')
@@ -186,7 +261,7 @@ def get_welcome_response():
 
 def handle_session_end_request():
     card_title = "Session Ended"
-    speech_output = "Thank you for trying the Alexa Skills Kit sample. " \
+    speech_output = "Thank you for booking with Dr. Who! Get well soon. " \
                     "Have a nice day! "
     # Setting this to true ends the session and exits the skill.
     should_end_session = True
