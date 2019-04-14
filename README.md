@@ -1,5 +1,21 @@
 # synpulse-hackathon
 
+# Instructions
+
+- import json content into Alexa Developer console
+- import lambda function into AWS lambda console, using Python3.7
+- see the detailed documentation `Documentation synpulse hackathon.pdf` for instructions on how to use the Alexa skill
+
+# Alexa Skill Json file
+
+`heiko.Alexa_skill.json`
+
+# lamda AWS function
+
+- requires Python3.7
+
+`lambda.py`
+
 
 ## Get AWS python package remote installed
 
