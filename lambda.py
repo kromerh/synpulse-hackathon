@@ -8,7 +8,7 @@ import random
 # --------------- Alexa Phrases and functions related
 
 missing_attributes_phrases = {'drtype': ['The type of doctor you are looking for is required to book your appointment.'],
-'plz': ['Please provide the plz where the doctor should be to finalize your appointment.'],
+'plz': ['Please provide the postal code where the doctor should be to finalize your appointment.'],
 'start_time': ['I still need a start time when your appointment should be scheduled.'],
 'end_time': ['Provide me with an end time when your appointment should latest take place.', 'Tell me the end time man!']}
 
@@ -133,12 +133,29 @@ def get_session_attribute_respose(intent):
                 set_attribute(attribute, attributeFromAlexa)
     none_session_attributes = get_none_session_attributes()
 
-    # go through the non set attributes and create a response based on the values that are missing
-    # print(f'none_session_attributes {none_session_attributes}')
-    resp_phrase = phrases_missing_attributes(none_session_attributes)
+    if len(none_session_attributes) > 0:  # some empty session attributes, Alexa still will wait for some input
+        # go through the non set attributes and create a response based on the values that are missing
+        # print(f'none_session_attributes {none_session_attributes}')
+        resp_phrase = phrases_missing_attributes(none_session_attributes)
 
-    speech_output = resp_phrase
+        speech_output = resp_phrase
+    else:
 
+        # # all attributes filled, appointment will be booked
+
+        confirm = confirmationPhrases[random.randint(0,len(confirmationPhrases)-1)]
+
+        # # what are the attribute values
+        # # session_attributes = {'drtype': 'none', 'plz': 'none', 'start_time': 'none', 'end_time': 'none'}
+        attribute_values = []
+        for k in session_attributes:
+            attribute_values.append(session_attributes[k])
+
+        appointment_date = '2019-05-17' # make up a random appointment date
+        appointment_time = '14:00' # make up a random appointment date
+
+        # speech_output = '42'
+        speech_output = f'{confirm} I will book an appointment with a doctor of type {attribute_values[0]}, in postal code {attribute_values[1]}. Your appointment is on {appointment_date} at {appointment_time}.'
     reprompt_text = "You never responded to the first test message. Sending another one."
     should_end_session = False
 
@@ -153,7 +170,7 @@ def get_welcome_response():
     """
     card_title = "Welcome"
     speech_output = "Welcome to your custom alexa application!"
-    print(pd.__version__)
+
     # set_attribute('drtype', 'none')
     # set_attribute('plz', 'none')
     # set_attribute('start_time', 'none')
@@ -222,8 +239,6 @@ def on_intent(intent_request, session):
         return get_session_attribute_respose(intent)
     elif intent_name == "getEndTime":
         return get_session_attribute_respose(intent)
-    # elif intent_name == "getLocation":
-    #     return get_session_attribute_respose('location', intent)
     elif intent_name == "AMAZON.HelpIntent":
         return get_welcome_response()
     elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":
